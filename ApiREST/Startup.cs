@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace ApiREST
 {
@@ -26,10 +27,13 @@ namespace ApiREST
             // Inyecta esta clase en el controlador
 
             services.AddScoped<RPValue>();
-
+            services.AddScoped<RpProducto>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
             //services.AddControllers();
         }
 
@@ -45,15 +49,26 @@ namespace ApiREST
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-
+             
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+           
         }
     }
 }
